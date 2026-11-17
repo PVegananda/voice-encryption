@@ -1,0 +1,10 @@
+.dev.vars
+.wrangler/
+node_modules/
+__pycache__/
+.venv/
+*.vnc
+*.webm
+*.m4a
+*.ogg
+.DS_Store

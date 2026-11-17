@@ -1,0 +1,619 @@
+/* =========================================================
+   VoiceVault — Minimalist Clean UI
+   Sederhana, bersih, ramah orang awam, tanpa ornamen berlebih.
+   ========================================================= */
+
+:root {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-active: #0284c7;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  --brand-blue: #0284c7;
+  --brand-blue-hover: #0369a1;
+  --brand-green: #16a34a;
+  --brand-red: #dc2626;
+
+  --google-blue: #0284c7;
+  --google-blue-hover: #0369a1;
+  --google-green: #16a34a;
+  --google-red: #dc2626;
+  --colab-orange: #0284c7;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius: 8px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Header ---------- */
+.colab-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.colab-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.colab-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #38bdf8;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.colab-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.colab-file-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.colab-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.colab-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-main);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-nav:hover {
+  background: var(--bg-subtle);
+  border-color: #cbd5e1;
+}
+
+.btn-nav.active {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #ffffff;
+}
+
+/* ---------- Container Layout ---------- */
+.notebook-container {
+  max-width: 1140px;
+  width: 100%;
+  margin: 1rem auto 2rem;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.notebook-intro {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+}
+.notebook-intro h1 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+.notebook-intro p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 2-Column Responsive Grid */
+.notebook-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .notebook-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* ---------- Cards / Steps ---------- */
+.colab-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.colab-cell:focus-within, .colab-cell.active-cell {
+  border-color: #cbd5e1;
+}
+
+.cell-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cell-num {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cell-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  flex: 1;
+  margin-left: 0.65rem;
+}
+
+.cell-body {
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cell-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ---------- Tabs Masukkan Suara ---------- */
+.choice-tabs {
+  display: flex;
+  gap: 0.4rem;
+}
+.choice-tab-btn {
+  flex: 1;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.choice-tab-btn.active {
+  background: #ffffff;
+  border-color: var(--google-blue);
+  color: var(--google-blue);
+  font-weight: 600;
+}
+
+.view-pane {
+  display: none;
+}
+.view-pane.active {
+  display: block;
+}
+
+/* Area Rekam Minimalis Ringkas */
+.simple-recorder {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.btn-record-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #d93025;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.btn-record-circle:hover {
+  transform: scale(1.05);
+}
+.record-dot {
+  width: 14px;
+  height: 14px;
+  background: #d93025;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+body.is-recording .record-dot {
+  border-radius: 3px;
+  width: 12px;
+  height: 12px;
+}
+body.is-recording .btn-record-circle {
+  background: #fce8e6;
+  border-color: #c5221f;
+}
+
+.record-text-group {
+  display: flex;
+  flex-direction: column;
+}
+.record-timer {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+.record-status-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Area Unggah File Sederhana Ringkas */
+.simple-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.simple-drop-zone:hover {
+  border-color: var(--google-blue);
+  background: #f8fbff;
+}
+.simple-drop-zone p {
+  margin: 0.15rem 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Audio Player Container Ringkas */
+.player-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-subtle);
+}
+.player-container.highlight-box {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.player-container.success-box {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.player-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.player-container audio {
+  width: 100%;
+  height: 32px;
+}
+
+/* Input & Form Inline Ringkas */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.form-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.form-row-inline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.form-row-inline .input-text {
+  flex: 1;
+}
+
+.input-text {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: inherit;
+  outline: none;
+}
+.input-text:focus {
+  border-color: var(--google-blue);
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.btn-primary-blue {
+  background: var(--google-blue);
+  color: #ffffff;
+}
+.btn-primary-blue:hover:not(:disabled) {
+  background: var(--google-blue-hover);
+}
+.btn-secondary {
+  background: #ffffff;
+  border-color: var(--border);
+  color: var(--text-main);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.colab-msg {
+  padding: 0.55rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.colab-msg.info {
+  background: #e8f0fe;
+  color: #1a73e8;
+  border-left: 3px solid #1a73e8;
+}
+.colab-msg.success {
+  background: #e6f4ea;
+  color: #137333;
+  border-left: 3px solid #137333;
+}
+.colab-msg.error {
+  background: #fce8e6;
+  color: #c5221f;
+  border-left: 3px solid #c5221f;
+}
+
+/* ---------- Daftar File Sederhana ---------- */
+.saved-notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 0.82rem;
+  gap: 0.5rem;
+}
+.note-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--google-blue);
+  flex-shrink: 0;
+}
+.note-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+.note-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.note-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.dot {
+  width: 3px;
+  height: 3px;
+  background: var(--text-faint);
+  border-radius: 50%;
+  display: inline-block;
+}
+.badge {
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.badge.enc {
+  background: #fef7e0;
+  color: #b06000;
+}
+.badge.cloud {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+.badge.local {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+.note-actions {
+  flex-shrink: 0;
+}
+
+/* Toast Sederhana */
+.toasts {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 1000;
+}
+.toast {
+  background: #202124;
+  color: #ffffff;
+  padding: 0.65rem 1rem;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  animation: fadeIn 0.2s ease;
+}
+.toast.error {
+  background: #c5221f;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dialog Sederhana */
+.dialog {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: calc(100% - 2rem);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

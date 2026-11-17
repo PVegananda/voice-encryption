@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoiceVault - Kirim Pesan Suara</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/sender.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="colab-header">
+    <a href="/" class="colab-brand">
+      <div class="colab-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" x2="12" y1="19" y2="22"/>
+        </svg>
+      </div>
+      <div class="colab-title-group">
+        <span class="colab-file-name">VoiceVault</span>
+        <span class="colab-subtitle">Kirim pesan suara terenkripsi</span>
+      </div>
+    </a>
+    <div class="colab-nav-actions">
+      <a href="/decrypt.html" class="btn-nav" title="Buka halaman penerima">
+        <span>Halaman Penerima</span>
+        <span style="font-size: 0.75rem;">→</span>
+      </a>
+      <button type="button" id="cloud-btn" class="btn-nav" title="Pengaturan Cloud">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        <span>Cloud: <span id="cloud-chip-label">Lokal</span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="notebook-container">
+
+    <!-- Ringkasan Singkat -->
+    <div class="notebook-intro">
+      <h1>Kirim Pesan Suara Aman</h1>
+      <p>Rekam atau pilih file suara, acak susunan audionya, lalu kunci dengan kata sandi sebelum dibagikan.</p>
+    </div>
+
+    <div class="notebook-grid">
+
+      <!-- Kolom Utama: Langkah Proses -->
+      <div class="main-column">
+
+        <!-- Langkah 1: Masukkan Suara -->
+        <section class="colab-cell" id="cell-step-1">
+          <div class="cell-header">
+            <span class="cell-num">1</span>
+            <span class="cell-title">Rekam atau Pilih Suara</span>
+          </div>
+          <div class="cell-body">
+            <div class="choice-tabs">
+              <button type="button" class="choice-tab-btn active" id="tab-record-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                Rekam Suara
+              </button>
+              <button type="button" class="choice-tab-btn" id="tab-upload-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Pilih File Audio
+              </button>
+            </div>
+
+            <!-- Mode Rekam -->
+            <div id="view-record" class="view-pane active">
+              <div class="simple-recorder">
+                <button type="button" id="record-btn" class="btn-record-circle" aria-label="Mulai merekam">
+                  <span class="record-dot"></span>
+                </button>
+                <div class="record-text-group">
+                  <span id="timer" class="record-timer">00:00</span>
+                  <span id="record-hint" class="record-status-label">Klik untuk mulai merekam</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mode Unggah File -->
+            <div id="view-upload" class="view-pane">
+              <div class="simple-drop-zone" id="drop-zone">
+                <p><strong>Pilih atau tarik file audio ke sini</strong> (.mp3, .wav, .m4a)</p>
+                <input type="file" id="file-input" accept="audio/*" hidden>
+              </div>
+            </div>
+
+            <!-- Player Suara Asli -->
+            <div id="original-preview" class="player-container" hidden>
+              <div class="player-label">
+                <span>Suara Asli</span>
+                <span id="original-duration" style="color: var(--text-muted); font-size: 0.8rem; font-weight: normal;">0.0s</span>
+              </div>
+              <audio id="player-original" controls preload="auto"></audio>
+            </div>
+          </div>
+        </section>
+
+        <!-- Langkah 2: Acak Suara -->
+        <section class="colab-cell" id="cell-step-2">
+          <div class="cell-header">
+            <span class="cell-num">2</span>
+            <span class="cell-title">Acak Susunan Audio</span>
+          </div>
+          <div class="cell-body">
+            <p class="cell-desc">Buat kata sandi untuk mengacak dan mengamankan audio:</p>
+
+            <div class="form-row-inline">
+              <input type="password" id="scramble-password" class="input-text" placeholder="Kata sandi rahasia (min. 8 karakter)">
+              <button type="button" id="btn-do-scramble" class="btn-action btn-primary-blue" disabled>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+                Acak Suara
+              </button>
+            </div>
+
+            <!-- Player Suara Teracak -->
+            <div id="scrambled-preview" class="player-container" hidden>
+              <div class="player-label">
+                <span>File audio scramble</span>
+                <span id="scrambled-duration" style="color: var(--text-muted); font-size: 0.8rem; font-weight: normal;">0.0s</span>
+              </div>
+              <audio id="player-scrambled" controls preload="auto"></audio>
+            </div>
+          </div>
+        </section>
+
+        <!-- Langkah 3: Kunci & Simpan -->
+        <section class="colab-cell" id="cell-step-3">
+          <div class="cell-header">
+            <span class="cell-num">3</span>
+            <span class="cell-title">Kunci & Simpan File</span>
+          </div>
+          <div class="cell-body">
+            <div id="encrypt-placeholder">
+              <p style="margin: 0; color: #80868b; font-size: 0.82rem;">Selesaikan langkah 2 terlebih dahulu</p>
+            </div>
+
+            <div id="encrypt-content" style="display:flex; flex-direction:column; gap:0.5rem;" hidden>
+              <button type="button" id="btn-do-aes" class="btn-action btn-primary-blue" style="align-self:flex-start;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Kunci & Simpan File
+              </button>
+
+              <div id="aes-result" class="colab-msg success" hidden>
+                <strong>File Berhasil Dikunci</strong>
+                <p style="margin: 0.15rem 0 0 0;" id="cloud-send-status">File siap dikirim atau dibuka oleh penerima.</p>
+              </div>
+
+              <div id="nav-banner" style="display:flex; gap:0.5rem; flex-wrap:wrap;" hidden>
+                <button type="button" id="btn-download-vnc" class="btn-action btn-secondary" style="flex:1;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                  Unduh File (.vnc)
+                </button>
+                <a href="/decrypt.html" class="btn-action btn-primary-blue" style="flex:1; text-decoration:none;">
+                  <span>Buka di Penerima</span>
+                  <span style="font-size:0.75rem; margin-left:4px;">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Kolom Samping -->
+      <aside class="side-column">
+
+        <!-- Daftar Rekaman Tersimpan -->
+        <section class="colab-cell">
+          <div class="cell-header">
+            <span class="cell-title" style="margin-left:0;">Pesan Tersimpan</span>
+            <span id="notes-count" style="font-size: 0.75rem; color: #5f6368;">0 file</span>
+          </div>
+          <div class="cell-body" style="padding: 0.65rem 0.75rem;">
+            <ul id="notes-list" class="saved-notes-list"></ul>
+          </div>
+        </section>
+
+        <!-- Informasi Alur -->
+        <div class="colab-cell">
+          <div class="cell-header">
+            <span class="cell-title" style="margin-left:0; font-size:0.82rem; color:#5f6368;">Panduan Singkat</span>
+          </div>
+          <div class="cell-body" style="font-size:0.8rem; color:#5f6368; line-height:1.5; padding:0.75rem;">
+            <div style="margin-bottom:0.4rem;"><strong>1. Rekam / Pilih</strong> audio yang ingin dikirim.</div>
+            <div style="margin-bottom:0.4rem;"><strong>2. Acak Audio</strong> dengan kata sandi rahasia.</div>
+            <div style="margin-bottom:0.4rem;"><strong>3. Kunci File</strong> untuk mengamankan data.</div>
+            <div><strong>4. Penerima</strong> membuka dengan kata sandi yang sama.</div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- Dialog Cloud -->
+  <dialog id="cloud-dialog" class="dialog">
+    <form id="cloud-form">
+      <h3 style="margin-top:0;">Pengaturan Cloud</h3>
+      <p style="font-size:0.85rem; color:#5f6368;">Masukkan token akses untuk sinkronisasi pesan suara ke server cloud:</p>
+      <input id="cloud-token" type="password" class="input-text" style="width:100%;" placeholder="Tempel token di sini">
+      <div class="dialog-actions">
+        <button type="button" class="btn-action btn-secondary" data-close>Tutup</button>
+        <button type="submit" class="btn-action btn-primary-blue">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts"></div>
+</body>
+</html>
